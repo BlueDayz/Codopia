@@ -1,0 +1,4 @@
+#To activate the environment
+conda activate
+
+call "C:\Users\User\Desktop\Neuronal Networks\Environments\neuro_net_env\Scripts\activate"
