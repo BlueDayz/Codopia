@@ -8,3 +8,6 @@
 #git branch -M main
 #git remote add origin https://github.com/BlueDayz/Codopia.git
 #git push -u origin main
+
+
+#Also I added an Environment packages (virtualenv), so our versions and packages are linked
