@@ -1,1 +1,0 @@
-call "C:\Users\User\Desktop\Neuronal Networks\Environments\neuro_net_env\Scripts\activate"
