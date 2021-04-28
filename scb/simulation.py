@@ -1,15 +1,16 @@
 import random
+import time
 from graphics import *
 from win32api import GetSystemMetrics
 
 # Initalization of a Creation Object as Class with different properties
 
 class Creatures:
-
-    creature_count = 0 # To keep count how many creatures are created
-    list_c = [] # A list for the graphical object of all creatures
-    list_names = [] # A list of all names for all cratures
-    hight = GetSystemMetrics(1) # Detecting the width and hight of the monitor for drawing a window
+    #Class statements for counting the creatures, saving them and their names and to get the window size
+    creature_count = 0
+    list_c = [] 
+    list_names = [] 
+    hight = GetSystemMetrics(1) 
     wide = GetSystemMetrics(0)
 
     # Initial properties of a crature
@@ -17,35 +18,41 @@ class Creatures:
         self.properties = properties
         self.stomach = stomach
 
-    # Creates a window with the detected hight and wide and a name of all cratures
+    # Creates a window with the detected hight and wide and a name of all cratures, alsow adds a title of all names
     def CreationOfWindow(self): 
-        title = " ".join(self.list_names) # join together the names in the list to a string for the title
-        self.win = GraphWin(title + "'crayz life", self.wide, self.hight) # Draws the window with Creaturs name and scaling of monitor
+        title = " ".join(self.list_names) 
+        self.win = GraphWin(title + "'crayz life", self.wide, self.hight) 
     
-    # The Function for creating a Creature                   
+    # The Function for creating a Creature, with name, color, a size and adjusted window sizes so cratures spawn not outside             
     def CreationOfCreature(self, name = "Bob"):
-        self.name = name #name for crature importatnt 
+        self.name = name 
         self.color = ("red","green","blue","pink") # Example for color pallet -> use a real one
-        self.circle_diameter = 30 # Diameter of grapical object
-        self.adjusted_hight = self.hight - self.circle_diameter # adjusted wide and hight so the cicles do not go over the rim (due to their own diameter)
+        self.circle_diameter = 30 
+        self.adjusted_hight = self.hight - self.circle_diameter
         self.adjusted_wide = self.wide - self.circle_diameter
 
-        self.list_names.append(self.name) # Adding the creature's name to the name list
-        c = Circle(Point(random.randrange(0, self.adjusted_wide,1),random.randrange(0, self.adjusted_hight,1)),self.circle_diameter) # Circle as representation of the creature - for now
-        c.setFill(self.color[self.creature_count]) # Different colors for the different creatures based on their cration
-        self.list_c.append(c) # Adding all grapical object to a list for drawing later
-        
-        self.creature_count += 1 # Add +1 to the crature count
+        self.list_names.append(self.name) 
+        c = Circle(Point(random.randrange(0, self.adjusted_wide, 1),random.randrange(0, self.adjusted_hight, 1)), self.circle_diameter) # Circle as representation of the creature - for now
+        c.setFill(self.color[self.creature_count]) # Different colors for the different creatures based on their creation
+        self.list_c.append(c) 
+        self.creature_count += 1 
 
     #Draw the created creatures to the crated window
     def DrawCreatures(self):
         for i in range(len(self.list_c)): # Draws all cratures from the list to the crated window
           self.list_c[i].draw(self.win)
 
-        self.win.getMouse() # Waiting command for the window until a click appears
-        self.win.close # closes window after mouseclick
-        
+        # Moves aroud all creatures randomly until the interruption of the consols happend
+        try:
+            while True:
+                for i in range(len(self.list_c)):
+                    self.list_c[i].move(random.randrange(-10,10,1),random.randrange(-10,10,1))
+                    time.sleep(0.005)
 
+        except KeyboardInterrupt: # Better solution for Movement stop and canceling !
+            self.win.getMouse()
+            self.win.close 
+              
 #Test Area where I crate three cratures in the variable x and crate a Window as well as drawing the cratures to it
 x = Creatures()
 
