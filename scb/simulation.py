@@ -49,9 +49,22 @@ class Creatures:
 #Test Area where I crate three cratures in the variable x and crate a Window as well as drawing the cratures to it
 x = Creatures()
 
-x.CreationOfCreature("Bob")
-x.CreationOfCreature("Heinz")
-x.CreationOfCreature("Mannfred")
-
-x.CreationOfWindow()
-x.DrawCreatures()
+while True:
+    if(x.creature_count == 0):
+        x.CreationOfCreature(input("Please choose a name for your first Creature:  "))
+    if(x.creature_count > 0) and (x.creature_count <= 4):
+        while True:
+            z = input("Do you want to create another creature(max = 4) [y/n]")
+            z = str(z)
+            if (z == "y"):
+                x.CreationOfCreature(input("Please choose a name for another Creature:  "))
+                break
+            if (z == "n"):
+                x.CreationOfWindow()
+                x.DrawCreatures()
+                break
+            print("Your answer was incorrect")
+    if(x.creature_count >= 4):
+        print("Sry maximal creature number is 4")
+        x.CreationOfWindow()
+        x.DrawCreatures()
