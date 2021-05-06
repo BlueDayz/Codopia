@@ -70,7 +70,7 @@ class World:
         if (deg_lat == 90 or deg_lat == 270) and (deg_long == 90 or deg_long == 270):            
             u = vz_lat * vz_long * self.radius
             v = Vector(0, 0, u)
-        elif deg_lat == 90 or deg_lat == 270:
+        elif deg_long == 90 or deg_long == 270:
             u = vz_lat * vz_long * self.radius * (1 / ((math.tan(rad_lat) * math.cos(rad_long)) ** 2 + math.cos(rad_long) ** 2 + math.sin(rad_long) ** 2) ) ** 0.5
             v = Vector(u * math.sin(rad_long), u * math.cos(rad_long), u * math.tan(rad_lat) * math.cos(rad_long))
         else:
@@ -78,8 +78,13 @@ class World:
             v = Vector(u * math.tan(rad_long) * math.cos(rad_lat), u * math.cos(rad_lat), u * math.sin(rad_lat))
         return v
 
-    def vector_to_coordinate(self, deg_lat, deg_long):
-        return 0
+    def vector_to_coordinate(self, v):
+        rad_lat = math.asin(v.x3/self.radius)
+        rad_long = math.asin(v.x1/self.radius)
+        deg_lat = rad_lat * 180 / math.pi 
+        deg_long = rad_long * 180 / math.pi
+        return (str(deg_lat) + "\t" + str(deg_long) + "\n")
+        
 
 
 def main():
@@ -105,7 +110,7 @@ def test():
     lo = 0
     w.add_organism(la, lo)
     with open("positions.txt", "w") as f:
-        f.write("Latitude\tLongitude\tx\ty\tz\n")
+        f.write("Latitude\tLongitude\tx\ty\tz\tlat\tlong\n")
     for la in [0,90,180,270,360]:#range(0,360):
         for lo in range(0,360, 10): #[0,90,180,270,360]:#
             time.sleep(0.05)
@@ -115,7 +120,7 @@ def test():
                         str(lo)+"\t"+
                         str(w.organisms[0].position.x1)+"\t"+
                         str(w.organisms[0].position.x2)+"\t"+
-                        str(w.organisms[0].position.x3)+"\n")       
+                        str(w.organisms[0].position.x3)+"\t"+ w.vector_to_coordinate(w.organisms[0].position)+"\n")       
 
 #main()
 test()
