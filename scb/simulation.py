@@ -47,7 +47,6 @@ class Creatures:
           self.list_c[i].draw(self.win)
 
         # Moves aroud all creatures randomly (until hitting the border) until the interruption of the consols happend 
-        x = 0
         try:
             while (True):
                 for i in range(len(self.list_c)): # all creatures of the list
@@ -66,6 +65,42 @@ class Creatures:
         except KeyboardInterrupt: # Better solution for Movement stop and canceling !
             self.win.getMouse()
             self.win.close 
+
+# Food is not working due to that the windows is crated in the Creature class so Food classes has no access 
+# MakeWindow has to be a class at its own ! => how to pass variables between different classes ?
+
+class Food:
+    list_f = []
+    list_position_of_food = []
+    food_count = 0
+    hight = GetSystemMetrics(1) 
+    wide = GetSystemMetrics(0)
+    
+    def __init__(self, saturation = 0, size = 10):
+        self.saturation = saturation
+        self.size = size
+
+    def Creation_of_Food(self):
+        self.diameter_food = 10
+        self.color = "green"
+        self.adjusted_hight = self.hight - self.diameter_food
+        self.adjusted_wide = self.wide - self.diameter_food
+
+        self.position_of_food = (random.randrange(0, self.adjusted_wide, 1),random.randrange(0, self.adjusted_hight, 1))
+        self.list_position_of_food.append(self.position_of_food)
+
+        f = Circle(Point(self.position_of_food[0],self.position_of_food[1]), self.diameter_food) 
+        f.setFill(self.color)
+        self.list_f.append(f) 
+
+        self.food_count += 1
+
+
+    def Draw_Food(self):
+        for i in range(len(self.list_f)): # Draws all cratures from the list to the crated window
+          self.list_f[i].draw(self.win)
+
+
 
 #Test Area where I crate three cratures in the variable x and crate a Window as well as drawing the cratures to it
 x = Creatures()
