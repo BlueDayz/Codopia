@@ -1,9 +1,12 @@
 # This is the mathematical and statistical approach for an natural selection simulation 
 
 # Section of Import and Packages
+#%%
 import random
+import math
+import numpy as np
 
-
+#%%
 # Class for the Environment
 class Environment:
 	dimention = (150000,150000) # meters
@@ -25,12 +28,14 @@ class Creatures:
 	standard_step_size = 0.7 # meters
 	standard_vision_of_field = 5 # Km
 	standard_size = 1.80 # meters
+	array_creature_food_distance = np.array([[["Creature"], ["Food"], ["Distance"]]])
 
-	def Spawn_Creature(self):
+	def Spawn_Creature(self, X, Y):
 		self.creatures_count += 1
-		self.start_position_of_creature = (75000,75000)
-		self.list_of_existing_creatures.append(self.start_position_of_creature)
 		self.hunger_count = 3 # after 3 days a creature starves
+		self.start_position_of_creature = (X, Y)
+		self.list_of_existing_creatures.append(self.start_position_of_creature)
+		
 		# create a object with all conditions
 		# store the object on a list (later move it around and change hunger over time and distance)
 
@@ -38,8 +43,11 @@ class Creatures:
 		# The creature sees for 5 km if it sees food it will moves toward it, if not a random movement is triggered 
 		self.F = F
 		self.nearest_Food = self.F.Show_all_food() # define the smalles value in the list to the own position
-		# metric to substract from food position the creatures position => than the lowest to use...
-		
+		for i in range(0, len(self.list_of_existing_creatures)):
+			for j in range(0, len(self.nearest_Food)):
+				dist = math.hypot(self.list_of_existing_creatures[i][0] - self.nearest_Food[j][0], self.list_of_existing_creatures[i][1] - self.nearest_Food[j][1])
+				self.array_creature_food_distance = np.append(self.array_creature_food_distance, [[[i], [j], [dist]]], axis = 2)
+
 		# self.list_of_existing_creatures[counter] get your own position related to the food distance, give out nearest food position....
 
 	def Grap_Food(self): # Move toward the food and if it reach the food so restore the hunger counter
@@ -53,8 +61,8 @@ class Food:
 	food_count = 0
 	list_of_existing_foods = []
 
-	def Spawn_Food(self):
-		self.position_of_food = (90000,90000)
+	def Spawn_Food(self, X, Y):
+		self.position_of_food = (X,Y)
 		self.list_of_existing_foods.append(self.position_of_food)
 		self.food_count += 1
 
@@ -65,14 +73,31 @@ class Food:
 		pass
 
 ##### TestArea
-
+#%%
 C = Creatures()
-C.Spawn_Creature()
+C.Spawn_Creature(75000, 75000)
+C.Spawn_Creature(10000, 10000)
 
 F = Food()
-F.Spawn_Food()
+F.Spawn_Food(5000, 5000)
+F.Spawn_Food(7000, 7000)
+F.Spawn_Food(9000, 9000)
+F.Spawn_Food(12000, 12000)
+F.Spawn_Food(15000, 15000)
 
+
+#%%
 C.Find_nearest_Food(F)
+
+x = C.array_creature_food_distance
+y = np.argwhere(x[0,2,:] == min(x[0,2,:]))
+z = x[0,2,y].astype(float)
+
+print(f"The entry with the lowest distance is: {y} \n") 
+print(f"The lowest value in the whole entry is: {z} \n")
+
+# ==> use the index to find the food piece and creature number, than move them towards the cooridnates 
+
 #####
 
 # Functions for the statistics
