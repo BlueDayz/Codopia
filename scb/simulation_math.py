@@ -91,10 +91,13 @@ C.Find_nearest_Food(F)
 
 x = C.array_creature_food_distance
 y = np.argwhere(x[0,2,:] == min(x[0,2,:]))
-z = x[0,2,y].astype(float)
+z1 = x[0,2,y].astype(float)
+z2 = x[0,1,y].astype(float)
+z3 = x[0,0,y].astype(float)
 
 print(f"The entry with the lowest distance is: {y} \n") 
-print(f"The lowest value in the whole entry is: {z} \n")
+print(f"The lowest value in the whole entry is: {z1} \n")
+print(f"The the food object which is nearest is: {z2} to the animal: {z3} \n")
 
 # ==> use the index to find the food piece and creature number, than move them towards the cooridnates 
 
