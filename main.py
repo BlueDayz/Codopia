@@ -276,6 +276,7 @@ class Organism:
 #         return 0
 
 
+<<<<<<< HEAD
 class FlatPlanet:
     def __init__(self, environment):
         self.organisms = []
@@ -290,6 +291,33 @@ class FlatPlanet:
             height=self.height,
             width=self.width
         )
+=======
+    def coordinate_to_vector(self, deg_lat, deg_long):
+        rad_lat = deg_lat * math.pi / 180
+        rad_long = deg_long * math.pi / 180
+        
+        vz_lat = (-1) ** ((deg_lat + 89) // 180)
+        vz_long = (-1) ** ((deg_long + 89) // 180)
+        
+        if (deg_lat == 90 or deg_lat == 270) and (deg_long == 90 or deg_long == 270):            
+            u = vz_lat * vz_long * self.radius
+            v = Vector(0, 0, u)
+        elif deg_long == 90 or deg_long == 270:
+            u = vz_lat * vz_long * self.radius * (1 / ((math.tan(rad_lat) * math.cos(rad_long)) ** 2 + math.cos(rad_long) ** 2 + math.sin(rad_long) ** 2) ) ** 0.5
+            v = Vector(u * math.sin(rad_long), u * math.cos(rad_long), u * math.tan(rad_lat) * math.cos(rad_long))
+        else:
+            u = vz_lat * vz_long * self.radius * (1 / ((math.tan(rad_long) * math.cos(rad_lat)) ** 2 + math.cos(rad_lat) ** 2 + math.sin(rad_lat) ** 2) ) ** 0.5
+            v = Vector(u * math.tan(rad_long) * math.cos(rad_lat), u * math.cos(rad_lat), u * math.sin(rad_lat))
+        return v
+
+    def vector_to_coordinate(self, v):
+        rad_lat = math.asin(v.x3/self.radius)
+        rad_long = math.asin(v.x1/self.radius)
+        deg_lat = rad_lat * 180 / math.pi 
+        deg_long = rad_long * 180 / math.pi
+        return (str(deg_lat) + "\t" + str(deg_long) + "\n")
+        
+>>>>>>> bc741bd3509ecf42fced3d922e879be10af8dcac
 
 
 def main():
@@ -299,6 +327,7 @@ def main():
     e.add_organism(-5, 5)
     e.add_organism(-5, -5)
     while True:
+<<<<<<< HEAD
         time.sleep(0.2)
         e.next_timeframe()
     # while True:
@@ -312,3 +341,36 @@ def main():
 
 
 main()
+=======
+        print("Type int:")
+        i = int(input())
+        while i > 0:
+            time.sleep(0.05)
+            la += 1
+            lo += 1
+            print("la: " + str(la) + "\n")
+            print("lo: " + str(lo) + "\n")
+            w.organisms[0].move_to(w,la, lo)
+            i -= 1
+            
+def test():
+    w = World()
+    la = 0
+    lo = 0
+    w.add_organism(la, lo)
+    with open("positions.txt", "w") as f:
+        f.write("Latitude\tLongitude\tx\ty\tz\tlat\tlong\n")
+    for la in [0,90,180,270,360]:#range(0,360):
+        for lo in range(0,360, 10): #[0,90,180,270,360]:#
+            time.sleep(0.05)
+            w.organisms[0].move_to(w,la,lo)
+            with open("positions.txt", "a") as f:
+                f.write(str(la) +"\t"+
+                        str(lo)+"\t"+
+                        str(w.organisms[0].position.x1)+"\t"+
+                        str(w.organisms[0].position.x2)+"\t"+
+                        str(w.organisms[0].position.x3)+"\t"+ w.vector_to_coordinate(w.organisms[0].position)+"\n")       
+
+#main()
+test()
+>>>>>>> bc741bd3509ecf42fced3d922e879be10af8dcac
