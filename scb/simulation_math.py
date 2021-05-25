@@ -5,6 +5,7 @@
 import random
 import math
 import numpy as np
+import matplotlib.pyplot as plt
 
 #%%
 # Class for the Environment
@@ -53,24 +54,27 @@ class Creatures:
 		for i in range(0, len(self.list_of_existing_creatures)):
 			for j in range(0, len(self.nearest_Food)):
 				self.array[i,j] = math.hypot(self.list_of_existing_creatures[i][0] - self.nearest_Food[j][0], self.list_of_existing_creatures[i][1] - self.nearest_Food[j][1])
-
-		x = np.amin(self.array, axis = 1) # Find the minimum for each row
+		
+		x = np.amin(self.array, axis = 1) # Find the minimum for each row = creature
 
 		for z in range(0,len(x)): # len of minimums = rows 
-			y = np.where(self.array == np.amin(self.array[z,:])) # Find the row and colum index for the minimum value
-			self.dict[z] = {"Creature_ID)":y[0][0], "Nearest_Food_ID":y[1][0], "Distance_to_nearest_Food":x[z]} # puts everything into a dict ordered
+			y = np.where(self.array[z,:] == np.amin(self.array[z,:])) # Find the row and colum index for the minimum value
+			self.dict[z] = {"Creature_ID)":z,"Creature_Position":self.list_of_existing_creatures[z], "Nearest_Food_ID":y[0][0],"Food_Position":self.nearest_Food[y[0][0]], "Distance[meter]":x[z], "Arrival_Time[h]":int((x[z]/60)/self.standard_speed)} # puts everything into a dict ordered
 
 		# Just a method to show the dict prettier ... unimportant!
-		print("{0:^16s}  {1:^16s}  {2:^16s}  {3:^16s}".format('Case', 'Creature_ID', 'Nearest_Food_ID', 'Distance'))
+		print("{0:^16s}  {1:^16s}  {2:^16s}  {3:^16s}  {4:^16s}  {5:^16s}  {6:^16s}".format('Case', 'Creature_ID', 'Creature_Position', 'Nearest_Food_ID', 'Food_Position','Distance[meter]', 'Arrival_Time[h]'))
 		for k,v in self.dict.items():
-			CID, NFID, Dis = v.items()
-		
-			print("{0:^16d}  {1:^16d}  {2:^16d}  {3:^16d}".format(k,CID[1],NFID[1],Dis[1]))
+			CID, CPos, NFID, FPos, Dis, Arriv = v.items()
 
+			print("{0:^16d}  {1:^16d}  {2:^16s}  {3:^16d}  {4:^16s}  {5:^16d}  {6:^16d}".format(k,CID[1],str(CPos[1]),NFID[1],str(FPos[1]),Dis[1],Arriv[1]))
+
+		# only for presentation
+		# print("\n",self.array)
 
 		######
 		
 		def Grap_Food(self): # Move toward the food and if it reach the food so restore the hunger counter
+
 			# Creature consumes food and restore the internal hunger_count to 3 days
 			pass
 
@@ -95,19 +99,67 @@ class Food:
 ##### TestArea
 #%%
 C = Creatures()
-C.Spawn_Creature(75000, 75000)
-C.Spawn_Creature(10000, 10000)
-
 F = Food()
-F.Spawn_Food(5000, 5000)
-F.Spawn_Food(7000, 7000)
-F.Spawn_Food(9000, 9000)
-F.Spawn_Food(12000, 12000)
-F.Spawn_Food(15000, 15000)
+
+min_distance = 0
+max_distance = 15000
+step = 1
+
+Creature_spawn_amount = 4
+Food_spawn_amount = 8
+
+for i in range(0,Creature_spawn_amount):
+	x = random.randrange(min_distance, max_distance,step)
+	y = random.randrange(min_distance, max_distance,step)
+
+	C.Spawn_Creature(x, y)
 
 
-#%%
+for j in range(0, Food_spawn_amount):
+	x = random.randrange(min_distance, max_distance,step)
+	y = random.randrange(min_distance, max_distance,step)
+
+	F.Spawn_Food(x, y)
+
 C.Find_nearest_Food(F)
+#%%
+
+### Plot of the closest food to the creatures
+n = Food_spawn_amount
+colors = list(range(0,n))
+
+
+
+
+plt.figure("All food all creatures")
+
+px = list(map(lambda x:x[0], C.list_of_existing_creatures))
+py = list(map(lambda x:x[1], C.list_of_existing_creatures))
+
+Unlucky_C_plot = plt.scatter(px, py, c = "black", cmap = "bwr", marker="o")
+
+
+px = list(map(lambda x:x[0], F.list_of_existing_foods))
+py = list(map(lambda x:x[1], F.list_of_existing_foods))
+
+Unwanted_F_plot = plt.scatter(px, py, c = "black", cmap = "bwr", marker="^")
+
+plt.show()
+
+plt.figure("Nearest Food for Creature")
+
+#### Use Dict.item() function to get the nested Information out of it like in the string formatation step above !!! than make a list for all the values !###########################################
+for z in C.dict:
+	px = list(map(lambda x:x[0], C.dict["Creature_Position"]))
+	py = list(map(lambda x:x[1], C.dict["Creature_Position"]))
+	print (px)
+	C_plot, = plt.scatter(C.dict[z]["Creature_Position"][0],C.dict[z]["Creature_Position"][1], c = colors[z], cmap = "bwr", marker ="o")
+	F_plot, = plt.scatter(C.dict[z]["Food_Position"][0],C.dict[z]["Food_Position"][1], c = colors[z], cmap = "bwr", marker ="^")
+	plt.legend([C_plot,F_plot],["Paired Creatures","Paired Food"], bbox_to_anchor=(1.05, 1))
+
+
+##### !!! #############################################
+#plt.show()
 
 # ==> use the index to find the food piece and creature number, than move them towards the cooridnates 
 
