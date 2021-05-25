@@ -59,7 +59,7 @@ class Creatures:
 
 		for z in range(0,len(x)): # len of minimums = rows 
 			y = np.where(self.array[z,:] == np.amin(self.array[z,:])) # Find the row and colum index for the minimum value
-			self.dict[z] = {"Creature_ID)":z,"Creature_Position":self.list_of_existing_creatures[z], "Nearest_Food_ID":y[0][0],"Food_Position":self.nearest_Food[y[0][0]], "Distance[meter]":x[z], "Arrival_Time[h]":int((x[z]/60)/self.standard_speed)} # puts everything into a dict ordered
+			self.dict[z] = {"Creature_ID":z,"Creature_Position":self.list_of_existing_creatures[z], "Nearest_Food_ID":y[0][0],"Food_Position":self.nearest_Food[y[0][0]], "Distance[meter]":x[z], "Arrival_Time[h]":int((x[z]/60)/self.standard_speed)} # puts everything into a dict ordered
 
 		# Just a method to show the dict prettier ... unimportant!
 		print("{0:^16s}  {1:^16s}  {2:^16s}  {3:^16s}  {4:^16s}  {5:^16s}  {6:^16s}".format('Case', 'Creature_ID', 'Creature_Position', 'Nearest_Food_ID', 'Food_Position','Distance[meter]', 'Arrival_Time[h]'))
@@ -125,8 +125,9 @@ C.Find_nearest_Food(F)
 #%%
 
 ### Plot of the closest food to the creatures
-n = Food_spawn_amount
+n = len(C.list_of_existing_creatures)
 colors = list(range(0,n))
+z=0
 
 
 
@@ -146,22 +147,38 @@ Unwanted_F_plot = plt.scatter(px, py, c = "black", cmap = "bwr", marker="^")
 
 plt.show()
 
+
+# Next figure to show the different Creatures - Food pairs whic hare the nearest to each other - lets see if its stays....
 plt.figure("Nearest Food for Creature")
 
-#### Use Dict.item() function to get the nested Information out of it like in the string formatation step above !!! than make a list for all the values !###########################################
-for z in C.dict:
-	px = list(map(lambda x:x[0], C.dict["Creature_Position"]))
-	py = list(map(lambda x:x[1], C.dict["Creature_Position"]))
-	print (px)
-	C_plot, = plt.scatter(C.dict[z]["Creature_Position"][0],C.dict[z]["Creature_Position"][1], c = colors[z], cmap = "bwr", marker ="o")
-	F_plot, = plt.scatter(C.dict[z]["Food_Position"][0],C.dict[z]["Food_Position"][1], c = colors[z], cmap = "bwr", marker ="^")
-	plt.legend([C_plot,F_plot],["Paired Creatures","Paired Food"], bbox_to_anchor=(1.05, 1))
+#Lists for the scatter plot
+C_list = []
+F_list = []
 
+#A way to extract nested dicts in python and give them to a list
+for key, values in C.dict.items():
+	CID, CPos, NFID, FPos, Dist, ArrTim = values.items()
+	C_list.append((CPos[1][0],CPos[1][1]))
+	F_list.append((FPos[1][0],FPos[1][1]))
 
-##### !!! #############################################
-#plt.show()
+#x and y coodinates of every nested entry in the dict for each case
+px = list(map(lambda x:x[0], C_list))
+py = list(map(lambda x:x[1], C_list))
 
-# ==> use the index to find the food piece and creature number, than move them towards the cooridnates 
+#creature plot
+C_plot = plt.scatter(px,py, c = colors, cmap = "bwr", marker ="o")
+
+#same for the food
+px = list(map(lambda x:x[0], F_list))
+py = list(map(lambda x:x[1], F_list))
+
+F_plot = plt.scatter(px, py, c = colors, cmap = "bwr", marker ="^")
+plt.legend([C_plot,F_plot],["Paired Creatures","Paired Food"], bbox_to_anchor=(1.05, 1))
+plt.colorbar()
+
+# Colorbar and legend have to been fixed ....
+plt.show()
+
 
 #####
 
