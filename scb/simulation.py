@@ -2,7 +2,7 @@ import random
 import time
 
 from graphics import *
-from win32api import GetSystemMetrics
+from screeninfo import get_monitors
 
 # Initalization of a Creation Object as Class with different properties
 
@@ -12,8 +12,8 @@ class Creatures:
     list_c = [] 
     list_names = [] 
     list_positions_of_creatures = []
-    hight = GetSystemMetrics(1) 
-    wide = GetSystemMetrics(0)
+    hight = get_monitors()[0].height
+    wide = get_monitors()[0].width
     my_color = ("red","yellow","blue","green","purple")
 
     # Initial properties of a crature
@@ -73,8 +73,8 @@ class Food:
     list_f = []
     list_position_of_food = []
     food_count = 0
-    hight = GetSystemMetrics(1) 
-    wide = GetSystemMetrics(0)
+    hight = get_monitors()[0].height
+    wide = get_monitors()[0].width
     
     def __init__(self, saturation = 0, size = 10):
         self.saturation = saturation
